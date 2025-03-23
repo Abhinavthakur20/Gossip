@@ -5,7 +5,6 @@ import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 
-
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useThemeStore } from "./store/useThemeStore";
@@ -18,20 +17,20 @@ const App = () => {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
 
-  console.log({ onlineUsers });
+  console.log("Online Users:", onlineUsers);
+  console.log("Auth User:", authUser);
 
+  // Check authentication status on mount
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth]); // Added checkAuth as a dependency
 
-  // Apply theme correctly for latest DaisyUI version
+  // Apply DaisyUI theme dynamically
   useEffect(() => {
     if (theme) {
       document.documentElement.setAttribute("data-theme", theme);
     }
   }, [theme]);
-
-  console.log({ authUser });
 
   if (isCheckingAuth && !authUser)
     return (
@@ -48,7 +47,7 @@ const App = () => {
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
         <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
       </Routes>
 
